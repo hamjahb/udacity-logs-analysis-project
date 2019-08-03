@@ -1,14 +1,25 @@
+#!/usr/bin/python3
+
 import psycopg2
+import sys
 
 
 def fetch_query(query):
-    db = psycopg2.connect("dbname=news")
-    cursor = db.cursor()
-    cursor.execute(query)
-    result = cursor.fetchall()
-    cursor.close()
-    db.close()
-    return result
+    try:
+        db = psycopg2.connect("dbname=news")
+    except psycopg2.Error as e:
+        print("Unable to connect!")
+        print(e.pgerror)
+        print(e.diag.message_detail)
+        sys.exit(1)
+    else:
+        print("Connected!")
+        cursor = db.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return result
 
 
 def top_3_article():
@@ -19,7 +30,8 @@ def top_3_article():
     order by count(log.path) desc limit 3;""")
     print("\n The three most popular article of all time are: \n")
     for result in result:
-        print('\t' + str(result[0]) + ' - ' + str(result[1]) + ' views')
+        print('\t{article} - {count} views'.format(article=result[0],
+                                                   count=result[1]))
 
 
 def most_popular_authors():
@@ -31,7 +43,8 @@ def most_popular_authors():
     order by views desc;""")
     print("\n The most pupular Authors of all time are: \n")
     for result in result:
-        print('\t' + str(result[0]) + ' - ' + str(result[1]) + ' views')
+        print("\t{article} - {count} views".format(article=result[0],
+                                                   count=result[1]))
 
 
 def error_days():
@@ -42,7 +55,8 @@ def error_days():
     by error desc) as subq where error > 1;""")
     print("\n Days with more than 1% requests error are: \n")
     for result in result:
-        print('\t' + str(result[0]) + ' - ' + str(result[1]) + ' %')
+        print("\t {} - {}%".format(result[0], result[1]))
+#        print('\t' + str(result[0]) + ' - ' + str(result[1]) + ' %')
 
 
 if __name__ == '__main__':
