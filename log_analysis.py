@@ -56,8 +56,7 @@ def error_days():
     print("\n Days with more than 1% requests error are: \n")
     for result in result:
         print("\t {} - {}%".format(result[0], result[1]))
-#        print('\t' + str(result[0]) + ' - ' + str(result[1]) + ' %')
-
+                
 
 if __name__ == '__main__':
     top_3_article()
